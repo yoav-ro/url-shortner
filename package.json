@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch",
-    "app": "nodemon ./back/index.js --ignore ./back/db/general/*.json"
+    "app": "nodemon ./back/index.js"
   },
   "repository": {
     "type": "git",

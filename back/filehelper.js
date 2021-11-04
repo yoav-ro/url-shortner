@@ -3,61 +3,35 @@ const path = require("path");
 
 //Adds a new url to the database;
 function addUrlToDB(urlObj) {
-    if (urlObj.userName) {
-        const path = getUserPath(urlObj.userName) + `/${urlObj.id}.json`;
-        fs.writeFileSync(path, JSON.stringify(urlObj))
-    }
-    else {
-        const path = getGeneralPath() + `/${urlObj.id}.json`;
-        fs.writeFileSync(path, JSON.stringify(urlObj))
-    }
+    const path = getUrlPath(urlObj.id)
+    fs.writeFileSync(path, JSON.stringify(urlObj))
 }
 
-//Return the full url of a given short url if it exist
-function getFullUrl(id, username) {
+//Return the full url of a given short url if it exist and updates its view count
+function getFullUrl(id) {
     if (doesUrlExist(id)) {
-        if (username) {
-            const userPath = getUserPath(username) + `/${id}.json`;
-            const urlObj = fs.readFileSync(userPath);
-            return urlObj.fullUrl;
-        }
-        else {
-            const generalPath = getGeneralPath(id) + `/${id}.json`;
-            const urlObj =JSON.parse(fs.readFileSync(generalPath));
-            return urlObj.fullUrl;
-        }
+        const linkPath = getUrlPath(id)
+        const urlObj = JSON.parse(fs.readFileSync(linkPath));
+        linkViewed(linkPath);
+        return urlObj.fullUrl;
     }
     throw "URL doesnt exist!";
 }
 
-//Checks if url exists
+//Updates the views counter of the given link
+function linkViewed(linkPath) {
+    const urlObj = JSON.parse(fs.readFileSync(linkPath));
+    console.log(urlObj)
+    urlObj.timesViewed++;
+    fs.unlinkSync(linkPath)
+    fs.writeFileSync(linkPath, JSON.stringify(urlObj))
+}
+
+//Checks if url exist
 function doesUrlExist(id) {
-    if (doesUrlExistUser(id) || doesUrlExistGeneral(id)) {
-        return true;
-    }
-    return false;
-}
-
-//Checks if a url exists under a user
-function doesUrlExistUser(id) {
-    const usersDirs = fs.readdirSync(path.resolve(__dirname, `./db/users`));
-    for (let i = 0; i < usersDirs.length; i++) {
-        const userLinks = fs.readdirSync(getUserPath(usersDirs[i]));
-        for (let j = 0; j < userLinks.length; j++) {
-            const fileName= userLinks[j].slice(0, userLinks[j].length-5)
-            if (fileName === id) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-//Checks if url exist in the general files
-function doesUrlExistGeneral(id) {
-    const generalDirs = fs.readdirSync(getGeneralPath());
+    const generalDirs = fs.readdirSync(path.resolve(__dirname, "./db"));
     for (let i = 0; i < generalDirs.length; i++) {
-        const fileName= generalDirs[i].slice(0, generalDirs[i].length-5)
+        const fileName = generalDirs[i].slice(0, generalDirs[i].length - 5)
         if (fileName === id) {
             return true;
         }
@@ -65,34 +39,34 @@ function doesUrlExistGeneral(id) {
     return false;
 }
 
-//Return the path to the general files in the database
-function getGeneralPath() {
-    return path.resolve(__dirname, `./db/general`);
+//Return the path to a given url 
+function getUrlPath(id) {
+    return path.resolve(__dirname, `./db/${id}.json`);
 }
 
-//Gets the path to a given user's folder
-function getUserPath(username) {
-    if (doesUserDirExist(username)) {
-        return path.resolve(__dirname, `./db/users/${username}`);
+//Returns all the links added by a given user
+function getUrlsByUser(userName) {
+    const dbPath = path.resolve(__dirname, "./db")
+    const urlDir = fs.readdirSync(dbPath)
+    const urlsToReturn = [];
+    for (let i = 0; i < urlDir.length; i++) {
+        urlsToReturn.push(checkUser(urlDir[i], userName))
     }
-    else {
-        createUserDir(username);
-        return path.resolve(__dirname, `./db/users/${username}`);
+    urlsToReturn.filter((val) => val)
+    return urlsToReturn
+}
+
+//Checks if a given url was added by the given user
+function checkUser(url, userName) {
+    const urlPath = path.resolve(__dirname, `./db/${url}`)
+    const urlObj = JSON.parse(fs.readFileSync(urlPath));
+    if (urlObj.userName === userName) {
+        return urlObj;
     }
 }
 
-//Creates a user folder under ./users
-function createUserDir(userName) {
-    fs.mkdirSync(getUserPath(userName));
-}
 
-//Checks if a user's folder exists
-function doesUserDirExist(userName) {
-    if (fs.existsSync(getUserPath(userName))) {
-        return true;
-    }
-    return false;
-}
+console.log(getUrlsByUser("yoav"))
 
 module.exports = {
     addUrlToDB,
