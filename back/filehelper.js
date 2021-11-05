@@ -21,7 +21,6 @@ function getFullUrl(id) {
 //Updates the views counter of the given link
 function linkViewed(linkPath) {
     const urlObj = JSON.parse(fs.readFileSync(linkPath));
-    console.log(urlObj)
     urlObj.timesViewed++;
     fs.unlinkSync(linkPath)
     fs.writeFileSync(linkPath, JSON.stringify(urlObj))
@@ -65,10 +64,8 @@ function checkUser(url, userName) {
     }
 }
 
-
-console.log(getUrlsByUser("yoav"))
-
 module.exports = {
     addUrlToDB,
     getFullUrl,
+    getUrlsByUser,
 }

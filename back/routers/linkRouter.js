@@ -15,11 +15,24 @@ linkRouter.post("/create", (req, res) => {
     fileHelper.addUrlToDB(urlObj);
 })
 
+linkRouter.get("/shortUrl/:id", (req, res) => {
+    const shortUrl = req.protocol + "://" + req.get("host") + "/link/" + req.params.id
+    res.send(shortUrl)
+})
+
 //Loading an existing short link
 linkRouter.get("/:url", (req, res) => {
     const longUrl = fileHelper.getFullUrl(req.params.url, req.headers.username);
     //res.send(longUrl)
     res.redirect(longUrl)
+})
+
+//Returns all the urls added by a user
+linkRouter.get("/user/:userName", (req, res) => {
+    const userName = req.params.userName;
+    const urlsByUser = fileHelper.getUrlsByUser(userName);
+    console.log(urlsByUser)
+    res.send(urlsByUser);
 })
 
 //Create a link object
@@ -32,5 +45,6 @@ function createLinkObj(inputLink, username) {
     };
     return urlObj;
 }
+
 
 module.exports = linkRouter;
