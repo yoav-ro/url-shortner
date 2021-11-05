@@ -8,7 +8,7 @@
     <title>Document</title>
     <script src="index.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="index.css">
+    <!-- <link rel="stylesheet" href="index.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -17,9 +17,11 @@
     <div id="headLine">Link shortner</div>
     <div id="linkInputDiv" class="inputDiv">
         <input type="text" placeholder="Enter link" id="linkInput">
+        <input type="text" placeholder="Enter Custom URL" style="display: none;" id="customInput">
         <button id="submitLinkBtn">Submit</button>
+        <div id="resultDiv"></div>
     </div>
-    <div id="resultDiv"></div>
+
     <br>
     <div id="userDiv" class="inputDiv">
         <div id="loginDiv">
@@ -27,8 +29,7 @@
             <button id="submitUserBtn">Login</button>
             <button id="disconnectBtn" style="display: none;">Disconnect</button>
         </div>
-        <ul id="userInfoDiv" class="urlsList">
-        </ul>
+        <ul id="userInfoDiv" class="urlsList"></ul>
     </div>
 
 

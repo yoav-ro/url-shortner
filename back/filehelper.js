@@ -13,7 +13,7 @@ function getFullUrl(id) {
         const linkPath = getUrlPath(id)
         const urlObj = JSON.parse(fs.readFileSync(linkPath));
         linkViewed(linkPath);
-        return urlObj.fullUrl;
+        return urlObj.originalUrl;
     }
     throw "URL doesnt exist!";
 }
@@ -21,7 +21,7 @@ function getFullUrl(id) {
 //Updates the views counter of the given link
 function linkViewed(linkPath) {
     const urlObj = JSON.parse(fs.readFileSync(linkPath));
-    urlObj.timesViewed++;
+    urlObj.redirectCount++;
     fs.unlinkSync(linkPath)
     fs.writeFileSync(linkPath, JSON.stringify(urlObj))
 }
@@ -45,14 +45,18 @@ function getUrlPath(id) {
 
 //Returns all the links added by a given user
 function getUrlsByUser(userName) {
-    const dbPath = path.resolve(__dirname, "./db");
-    const urlDir = fs.readdirSync(dbPath);
+    const urlDir = getUrlDir();
     const urls = [];
     for (let i = 0; i < urlDir.length; i++) {
         urls.push(checkUser(urlDir[i], userName));
     }
     const urlsToReturn = urls.filter(Boolean);
     return urlsToReturn;
+}
+
+function getUrlDir() {
+    const dbPath = path.resolve(__dirname, "./db");
+    return fs.readdirSync(dbPath);
 }
 
 //Checks if a given url was added by the given user
@@ -68,4 +72,5 @@ module.exports = {
     addUrlToDB,
     getFullUrl,
     getUrlsByUser,
+    getUrlDir,
 }
