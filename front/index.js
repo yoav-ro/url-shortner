@@ -2,9 +2,13 @@ const urlInput = document.getElementById("linkInput")
 const submitUrlBtn = document.getElementById("submitLinkBtn");
 const userNameInput = document.getElementById("userNameInput");
 const userInputBtn = document.getElementById("submitUserBtn");
+const disconnectBtn = document.getElementById("disconnectBtn");
 
 submitUrlBtn.addEventListener("click", () => { addNewUrl() })
 userInputBtn.addEventListener("click", () => { userRegister() })
+disconnectBtn.addEventListener("click", () => { disconnect() })
+
+import "./index.css";
 
 let currUser = "";
 const baseURL = "http://localhost:3000"
@@ -28,13 +32,8 @@ function getCopyBtn(textToCopy) {
 
 function userRegister() {
     if (userNameInput.value) {
-        if (currUser === "") {
             currUser = userNameInput.value;
             domLogin();
-        }
-        else {
-            alert("User already logged in!")
-        }
     }
     else {
         alert("No user entered!")
@@ -42,17 +41,16 @@ function userRegister() {
 }
 
 function domLogin() {
-    const disconnectBtn = document.createElement("button");
-    disconnectBtn.id = "disconnectBtn";
-    disconnectBtn.textContent = "Disconnect"
-    document.body.append(disconnectBtn)
+    userInputBtn.style.display="none";
+    disconnectBtn.style.display="initial";
     userNameInput.readOnly = true;
     userNameInput.value = `Welcome ${currUser}`
-    disconnectBtn.addEventListener("click", () => { disconnect() })
     domUserInfo(currUser);
 }
 
 function disconnect() {
+    userInputBtn.style.display="initial";
+    disconnectBtn.style.display="none";
     currUser = "";
     userNameInput.readOnly = false;
     userNameInput.value = "";
@@ -101,18 +99,19 @@ function domUserInfo(userName) {
 
 function buildUrlEl(urlObj, urlNum) {
     const shortUrl = baseURL + "/link/" + urlObj.id
-    const urlEl = document.createElement("div")
+    const urlEl = document.createElement("li")
     urlEl.textContent = `URL ${urlNum}:`;
+    urlEl.classList.add("urlInfo")
     const idDiv = document.createElement("div")
     idDiv.textContent = `ID: ${urlObj.id}`;
     const fullUrlDiv = document.createElement("div")
     fullUrlDiv.textContent = `Full URL: ${urlObj.fullUrl}`;
     const viewCountDiv = document.createElement("div")
     viewCountDiv.textContent = `Times clicked: ${urlObj.timesViewed}`;
-    const shortUrlDiv= document.createElement("div");
-    shortUrlDiv.textContent= `Shortened URL: ${shortUrl}`;
-    
-    const copyBtn= getCopyBtn(baseURL + "/link/" + urlObj.id)
+    const shortUrlDiv = document.createElement("div");
+    shortUrlDiv.textContent = `Shortened URL: ${shortUrl}`;
+
+    const copyBtn = getCopyBtn(baseURL + "/link/" + urlObj.id)
     urlEl.append(idDiv);
     urlEl.append(fullUrlDiv);
     urlEl.append(viewCountDiv);

@@ -31,7 +31,6 @@ linkRouter.get("/:url", (req, res) => {
 linkRouter.get("/user/:userName", (req, res) => {
     const userName = req.params.userName;
     const urlsByUser = fileHelper.getUrlsByUser(userName);
-    console.log(urlsByUser)
     res.send(urlsByUser);
 })
 

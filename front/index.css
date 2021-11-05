@@ -1,0 +1,26 @@
+#headLine {
+    font-size: 60px;
+    text-align: center;
+    font-family: monospace;
+    font-weight: bolder;
+}
+
+.inputDiv {
+    background-color: gainsboro;
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    border-radius: 10px;
+    border: 2px solid grey;
+}
+
+.urlsList {
+    text-align: left;
+    overflow-y: auto;
+}
+
+.urlInfo {
+    overflow: auto;
+}

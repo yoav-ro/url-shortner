@@ -45,14 +45,14 @@ function getUrlPath(id) {
 
 //Returns all the links added by a given user
 function getUrlsByUser(userName) {
-    const dbPath = path.resolve(__dirname, "./db")
-    const urlDir = fs.readdirSync(dbPath)
-    const urlsToReturn = [];
+    const dbPath = path.resolve(__dirname, "./db");
+    const urlDir = fs.readdirSync(dbPath);
+    const urls = [];
     for (let i = 0; i < urlDir.length; i++) {
-        urlsToReturn.push(checkUser(urlDir[i], userName))
+        urls.push(checkUser(urlDir[i], userName));
     }
-    urlsToReturn.filter((val) => val)
-    return urlsToReturn
+    const urlsToReturn = urls.filter(Boolean);
+    return urlsToReturn;
 }
 
 //Checks if a given url was added by the given user
