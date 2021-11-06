@@ -59,6 +59,8 @@ linkRouter.get("/:url", (req, res) => {
 //Returns all the urls added by a user
 linkRouter.get("/user/:userName", (req, res) => {
     const userName = req.params.userName;
+    console.log(userName)
+    console.log("test")
     const urlsByUser = fileHelper.getUrlsByUser(userName);
     res.send(urlsByUser);
 })
