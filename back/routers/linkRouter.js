@@ -47,6 +47,10 @@ linkRouter.post("/create/:customId", (req, res, next) => {
     }
 })
 
+linkRouter.get("/", (req, res)=>{
+    res.send("test")
+})
+
 //Loading an existing short link
 linkRouter.get("/:url", (req, res) => {
     const longUrl = fileHelper.getFullUrl(req.params.url, req.headers.username);
@@ -59,10 +63,8 @@ linkRouter.get("/:url", (req, res) => {
 //Returns all the urls added by a user
 linkRouter.get("/user/:userName", (req, res) => {
     const userName = req.params.userName;
-    console.log(userName)
-    console.log("test")
     const urlsByUser = fileHelper.getUrlsByUser(userName);
-    res.send("test");
+    res.send(urlsByUser);
 })
 
 //Create a link object
