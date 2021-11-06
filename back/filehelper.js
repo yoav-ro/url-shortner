@@ -69,10 +69,11 @@ function checkUser(url, userName) {
     }
 }
 
-module.exports = {
-    addUrlToDB,
-    getFullUrl,
-    getUrlsByUser,
-    getUrlDir,
-    doesUrlExist,
-}
+// module.exports = {
+//     addUrlToDB,
+//     getFullUrl,
+//     getUrlsByUser,
+//     getUrlDir,
+//     doesUrlExist,
+// }
+
