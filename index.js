@@ -14,9 +14,9 @@ app.get('/', (req, res) => { // serve main path as static file
     res.sendFile(path.resolve('./dist/index.html'))
 });
 
-app.get('/', (req, res) => {
-    res.send('hello world!');
-  });
+app.get('/test', (req, res) => {
+    res.send('its alive!');
+});
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
