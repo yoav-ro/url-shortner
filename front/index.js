@@ -119,7 +119,6 @@ function domDisconnect() {
 function sendNewUrl(inputUrl, userName) {
     const data = { longUrl: inputUrl, username: userName }
     //`${baseURL}/link/create`
-    //`/link/create`
     const response = axios.post(`/link/create`, data)
     response.then((value) => {
         addResultEl(value.data)
@@ -130,7 +129,6 @@ function sendNewUrl(inputUrl, userName) {
 function sendNewCustomUrl(inputUrl, customId, userName) {
     const data = { longUrl: inputUrl, username: userName }
     //`${baseURL}/link/create/${customId}
-    //`/link/create/${customId}`
     const response = axios.post(`/link/create/${customId}`, data)
     response.then((value) => {
         addResultEl(value.data)
@@ -165,7 +163,6 @@ function addResultEl(shortUrl) {
 //Returns a promise containing all urls by given user
 function getUrlsByUser(userName) {
     //${baseURL}/link/user/${userName}
-    //`/link/user/${userName}
     const response = axios.get(`/link/user/${userName}`)
     return response;
 }
