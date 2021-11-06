@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const linkRouter = require("./routers/linkRouter.js");
+const linkRouter = require("./back/routers/linkRouter.js");
 
 const app = express();
 app.use(express.json());
