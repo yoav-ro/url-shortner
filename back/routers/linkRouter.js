@@ -11,8 +11,8 @@ linkRouter.post("/create", (req, res) => {
     const userName = req.body.username;
     const urlObj = createLinkObj(longUrl, userName)
     const shortUrl = req.protocol + "://" + req.get("host") + "/link/" + urlObj.id
-    res.send(shortUrl)
     fileHelper.addUrlToDB(urlObj);
+    res.send(shortUrl)
 })
 
 linkRouter.get("/shortUrl/:id", (req, res) => {
