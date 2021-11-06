@@ -1,13 +1,12 @@
-
-const urlInput = document.getElementById("linkInput")
 const submitUrlBtn = document.getElementById("submitLinkBtn");
-const userNameInput = document.getElementById("userNameInput");
 const userInputBtn = document.getElementById("submitUserBtn");
 const disconnectBtn = document.getElementById("disconnectBtn");
+const testCustomIdBtn = document.getElementById("testCustomId")
 
 submitUrlBtn.addEventListener("click", () => { addNewUrl() })
 userInputBtn.addEventListener("click", () => { userRegister() })
 disconnectBtn.addEventListener("click", () => { domDisconnect() })
+testCustomIdBtn.addEventListener("click", () => { isCusttomIdFree() })
 
 const validator = require("validator")
 
@@ -20,9 +19,9 @@ const baseURL = "http://localhost:3000"
 function addNewUrl() {
     const normalInput = document.getElementById("linkInput");
     const customInput = document.getElementById("customInput");
-    if (normalInput.value) {
-        if (validator.isURL(normalInput.value)) {
-            if (customInput.value === "") {
+    if (normalInput.value) { //Check if if a url was entered
+        if (validator.isURL(normalInput.value)) { //Validates the url
+            if (customInput.value === "") { //Checks if a custom id was entered
                 addNormalUrl(normalInput.value)
             }
             else {
@@ -38,6 +37,7 @@ function addNewUrl() {
     }
 }
 
+//Sends a normal url to be added
 function addNormalUrl(urlToShorten) {
     sendNewUrl(urlToShorten, currUser)
     document.getElementById("resultDiv").innerHTML = "";
@@ -51,9 +51,29 @@ function getCopyBtn(textToCopy) {
     return copyBtn;
 }
 
+//Checks if the custom url added is free
+async function isCusttomIdFree() {
+    const customInput = document.getElementById("customInput")
+    const customId = customInput.value;
+    if (customId) {
+        document.getElementById("testCustomId").textContent = "🔃"
+        const request = await axios.get(`${baseURL}/link/check/${customId}`);
+        if (request.data) {
+            document.getElementById("testCustomId").textContent = "✔"
+        }
+        else {
+            document.getElementById("testCustomId").textContent = "❌"
+        }
+        customInput.addEventListener("keypress", () => { testCustomIdBtn.textContent = "Check if useable" })
+    }
+    else {
+        alert("No input detected!")
+    }
+}
 
 //User loggin
 function userRegister() {
+    const userNameInput = document.getElementById("userNameInput")
     if (userNameInput.value) {
         currUser = userNameInput.value;
         domLogin();
@@ -66,7 +86,11 @@ function userRegister() {
 
 //Handles all elements related to a user when loggin in
 function domLogin() {
+    const userNameInput = document.getElementById("userNameInput")
     document.getElementById("customInput").style.display = "initial"
+    document.getElementById("baseLinkLabel").style.display = "initial"
+    document.getElementById("testCustomId").style.display = "initial"
+
     userInputBtn.style.display = "none";
     disconnectBtn.style.display = "initial";
     userNameInput.readOnly = true;
@@ -76,7 +100,10 @@ function domLogin() {
 
 //Handles all the elements related to a user when disconnecting 
 function domDisconnect() {
+    const userNameInput = document.getElementById("userNameInput")
     document.getElementById("customInput").style.display = "none"
+    document.getElementById("baseLinkLabel").style.display = "none"
+    document.getElementById("testCustomId").style.display = "none"
     userInputBtn.style.display = "initial";
     disconnectBtn.style.display = "none";
     currUser = "";
@@ -95,15 +122,16 @@ function sendNewUrl(inputUrl, userName) {
     })
 }
 
+//Send a request for a custom url link
 function sendNewCustomUrl(inputUrl, customId, userName) {
-        const data = { longUrl: inputUrl, username: userName }
-        const response = axios.post(`${baseURL}/link/create/${customId}`, data)
-        response.then((value) => {
-            addResultEl(value.data)
-        })
-        response.catch((value)=>{
-            alert("ID already taken!")
-        })
+    const data = { longUrl: inputUrl, username: userName }
+    const response = axios.post(`${baseURL}/link/create/${customId}`, data)
+    response.then((value) => {
+        addResultEl(value.data)
+    })
+    response.catch((value) => {
+        alert("ID already taken!")
+    })
 }
 
 //Requests a new url to be shortened
@@ -114,6 +142,9 @@ function addCustomUrl(fullUrl, customId) {
 
 //Shows the result after shortning a new url
 function addResultEl(shortUrl) {
+    if (currUser !== "") {
+        domUserInfo(currUser)
+    }
     const resultDiv = document.getElementById("resultDiv");
 
     const copyBtn = getCopyBtn(shortUrl);
@@ -135,6 +166,7 @@ function getUrlsByUser(userName) {
 function domUserInfo(userName) {
     const urlsPromise = getUrlsByUser(userName);
     const userInfoDiv = document.getElementById("userInfoDiv");
+    userInfoDiv.innerHTML = "";
     urlsPromise.then((value) => {
         const urls = value.data;
         console.log(urls)
@@ -160,7 +192,7 @@ function buildUrlEl(urlObj, urlNum) {
     const shortUrlDiv = document.createElement("div");
     shortUrlDiv.textContent = `Shortened URL: ${shortUrl}`;
     const dateDiv = document.createElement("div");
-    dateDiv.textContent = urlObj.creationDate;
+    dateDiv.textContent = `Creation date: ${urlObj.creationDate}`;
 
     const copyBtn = getCopyBtn(baseURL + "/link/" + urlObj.id)
     urlEl.append(idDiv);

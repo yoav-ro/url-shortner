@@ -15,7 +15,7 @@ function getFullUrl(id) {
         linkViewed(linkPath);
         return urlObj.originalUrl;
     }
-    throw "URL doesnt exist!";
+    return 404;
 }
 
 //Updates the views counter of the given link
@@ -54,6 +54,7 @@ function getUrlsByUser(userName) {
     return urlsToReturn;
 }
 
+//Returns the file names of all links in the database
 function getUrlDir() {
     const dbPath = path.resolve(__dirname, "./db");
     return fs.readdirSync(dbPath);
@@ -73,4 +74,5 @@ module.exports = {
     getFullUrl,
     getUrlsByUser,
     getUrlDir,
+    doesUrlExist,
 }

@@ -2,10 +2,8 @@ const express = require("express");
 const path = require("path");
 const shortId = require("shortid");
 const fileHelper = require("../filehelper.js")
-const validateId = require("../middleware/validateId.js")
 
 const linkRouter = express.Router();
-linkRouter.use(validateId)
 
 //Creating a new short link
 linkRouter.post("/create", (req, res) => {
@@ -22,11 +20,20 @@ linkRouter.get("/shortUrl/:id", (req, res) => {
     res.send(shortUrl)
 })
 
-//
+linkRouter.get("/check/:id", (req, res) => {
+    const id = req.params.id;
+    if (fileHelper.doesUrlExist(id)) {
+        res.send(false);
+    }
+    else {
+        res.send(true);
+    }
+})
+
+//Handles shortning a link with a custom id
 linkRouter.post("/create/:customId", (req, res, next) => {
     const customId = req.params.customId;
-    if (validateId(customId, req, res, next)) {
-        console.log("id is free")
+    if (!fileHelper.doesUrlExist(customId)) {
         const longUrl = req.body.longUrl;
         const userName = req.body.username;
         const urlObj = createLinkObj(longUrl, userName);
@@ -35,11 +42,17 @@ linkRouter.post("/create/:customId", (req, res, next) => {
         res.send(shortUrl)
         fileHelper.addUrlToDB(urlObj)
     }
+    else {
+        res.status(406).json({ message: `ID ${id} is already taken!` })
+    }
 })
 
 //Loading an existing short link
 linkRouter.get("/:url", (req, res) => {
     const longUrl = fileHelper.getFullUrl(req.params.url, req.headers.username);
+    if (longUrl === 404) {
+        res.status(404).send(`Error! URL doesnt exist`)
+    }
     res.redirect(longUrl)
 })
 
@@ -62,15 +75,19 @@ function createLinkObj(inputLink, username) {
     return urlObj;
 }
 
+//Returns a string of current date and time
 function getCurrDate() {
-    const currentdate = new Date();
-    const ret = currentdate.getDate() + "/"
-        + (currentdate.getMonth() + 1) + "/"
-        + currentdate.getFullYear() + " "
-        + currentdate.getHours() + ":"
-        + currentdate.getMinutes() + ":"
-        + currentdate.getSeconds();
-    return ret;
+    const today = new Date();
+    const dateStr = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+    const timeStr = `${today.getHours()}:${checkTime(today.getMinutes())}:${checkTime(today.getSeconds())}`;
+    const fullDateTime = `${timeStr} ${dateStr}`;
+    return fullDateTime;
+}
+
+// Addes 0 in front of numbers
+function checkTime(i) {
+    if (i < 10) { i = `0${i}`; } // add zero in front of numbers < 10
+    return i;
 }
 
 module.exports = linkRouter;

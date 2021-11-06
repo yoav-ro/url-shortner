@@ -8,26 +8,28 @@
     <title>Document</title>
     <script src="index.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- <link rel="stylesheet" href="index.css"> -->
+    <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
 <body>
-    <div id="headLine">Link shortner</div>
+    <div id="headLine">Link_Shortner</div>
     <div id="linkInputDiv" class="inputDiv">
-        <input type="text" placeholder="Enter link" id="linkInput">
-        <input type="text" placeholder="Enter Custom URL" style="display: none;" id="customInput">
-        <button id="submitLinkBtn">Submit</button>
+        <input type="text" placeholder="Enter link" id="linkInput" class="inputs"> <br>
+        <label style="display: none; font-weight: 500;" id="baseLinkLabel">http://localhost:3000/link/</label>
+        <input type="text" placeholder="Enter Custom URL" style="display: none;" id="customInput" class="inputs">
+        <button id="testCustomId" style="display: none;" class="btn btn-primary">Check if useable</button><Br>
+        <button id="submitLinkBtn" class="btn btn-primary">Submit</button>
         <div id="resultDiv"></div>
     </div>
 
     <br>
     <div id="userDiv" class="inputDiv">
         <div id="loginDiv">
-            <input type="text" id="userNameInput" placeholder="User name">
-            <button id="submitUserBtn">Login</button>
-            <button id="disconnectBtn" style="display: none;">Disconnect</button>
+            <input type="text" id="userNameInput" placeholder="User name" class="inputs"> <br> <br>
+            <button id="submitUserBtn" class="btn btn-primary">Login</button>
+            <button id="disconnectBtn" style="display: none;" class="btn btn-primary">Disconnect</button>
         </div>
         <ul id="userInfoDiv" class="urlsList"></ul>
     </div>
