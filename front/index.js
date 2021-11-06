@@ -13,7 +13,6 @@ const validator = require("validator")
 import "./index.css";
 
 let currUser = "";
-const baseURL = "http://localhost:3000"
 
 //Requests a new url to be shortened
 function addNewUrl() {
@@ -57,7 +56,7 @@ async function isCusttomIdFree() {
     const customId = customInput.value;
     if (customId) {
         document.getElementById("testCustomId").textContent = "🔃"
-        const request = await axios.get(`${baseURL}/link/check/${customId}`);
+        const request = await axios.get(`/link/check/${customId}`);
         if (request.data) {
             document.getElementById("testCustomId").textContent = "✔"
         }
@@ -82,7 +81,6 @@ function userRegister() {
         alert("No user entered!")
     }
 }
-
 
 //Handles all elements related to a user when loggin in
 function domLogin() {
@@ -116,7 +114,7 @@ function domDisconnect() {
 //Sends a new url to shorten
 function sendNewUrl(inputUrl, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    const response = axios.post(`${baseURL}/link/create`, data)
+    const response = axios.post(`/link/create`, data)
     response.then((value) => {
         addResultEl(value.data)
     })
@@ -125,7 +123,7 @@ function sendNewUrl(inputUrl, userName) {
 //Send a request for a custom url link
 function sendNewCustomUrl(inputUrl, customId, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    const response = axios.post(`${baseURL}/link/create/${customId}`, data)
+    const response = axios.post(`/link/create/${customId}`, data)
     response.then((value) => {
         addResultEl(value.data)
     })
@@ -158,7 +156,7 @@ function addResultEl(shortUrl) {
 
 //Returns a promise containing all urls by given user
 function getUrlsByUser(userName) {
-    const response = axios.get(`${baseURL}/link/user/${userName}`)
+    const response = axios.get(`/link/user/${userName}`)
     return response;
 }
 
