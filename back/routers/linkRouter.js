@@ -62,7 +62,7 @@ linkRouter.get("/user/:userName", (req, res) => {
     console.log(userName)
     console.log("test")
     const urlsByUser = fileHelper.getUrlsByUser(userName);
-    res.send(urlsByUser);
+    res.send("test");
 })
 
 //Create a link object
