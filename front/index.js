@@ -57,8 +57,6 @@ async function isCusttomIdFree() {
     const customId = customInput.value;
     if (customId) {
         document.getElementById("testCustomId").textContent = "🔃"
-        //${baseURL}/link/check/${customId}
-        //`/link/check/${customId}`
         const request = await axios.get(`/link/check/${customId}`);
         if (request.data) {
             document.getElementById("testCustomId").textContent = "✔"
@@ -118,7 +116,6 @@ function domDisconnect() {
 //Sends a new url to shorten
 function sendNewUrl(inputUrl, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    //`${baseURL}/link/create`
     const response = axios.post(`/link/create`, data)
     response.then((value) => {
         addResultEl(value.data)
@@ -128,7 +125,6 @@ function sendNewUrl(inputUrl, userName) {
 //Send a request for a custom url link
 function sendNewCustomUrl(inputUrl, customId, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    //`${baseURL}/link/create/${customId}
     const response = axios.post(`/link/create/${customId}`, data)
     response.then((value) => {
         addResultEl(value.data)
@@ -162,7 +158,6 @@ function addResultEl(shortUrl) {
 
 //Returns a promise containing all urls by given user
 function getUrlsByUser(userName) {
-    //${baseURL}/link/user/${userName}
     const response = axios.get(`/link/user/${userName}`)
     return response;
 }
@@ -183,8 +178,7 @@ function domUserInfo(userName) {
 
 //Creates an element containing info about a url
 function buildUrlEl(urlObj, urlNum) {
-    //const shortUrl = baseURL + "/link/" + urlObj.id
-    const shortUrl = baseURL + "/link/" + urlObj.id //change after getting heroku url
+    const shortUrl = "http://link-cut.herokuapp.com/link/" + urlObj.id //change after getting heroku url
     const urlEl = document.createElement("li")
     urlEl.textContent = `URL ${urlNum}:`;
     urlEl.classList.add("urlInfo")
