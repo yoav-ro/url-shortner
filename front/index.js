@@ -8,9 +8,9 @@ userInputBtn.addEventListener("click", () => { userRegister() })
 disconnectBtn.addEventListener("click", () => { domDisconnect() })
 testCustomIdBtn.addEventListener("click", () => { isCusttomIdFree() })
 
-const validator = require("validator")
+// const validator = require("validator")
 
-import "./index.css";
+// import "./index.css";
 
 let currUser = "";
 const baseURL = "http://localhost:3000"
@@ -20,17 +20,17 @@ function addNewUrl() {
     const normalInput = document.getElementById("linkInput");
     const customInput = document.getElementById("customInput");
     if (normalInput.value) { //Check if if a url was entered
-        if (validator.isURL(normalInput.value)) { //Validates the url
-            if (customInput.value === "") { //Checks if a custom id was entered
-                addNormalUrl(normalInput.value)
-            }
-            else {
-                addCustomUrl(normalInput.value, customInput.value)
-            }
+        // if (validator.isURL(normalInput.value)) { //Validates the url
+        if (customInput.value === "") { //Checks if a custom id was entered
+            addNormalUrl(normalInput.value)
         }
         else {
-            alert("Invalid url!")
+            addCustomUrl(normalInput.value, customInput.value)
         }
+        // }
+        // else {
+        //     alert("Invalid url!")
+        // }
     }
     else {
         alert("No url entered!")
@@ -57,7 +57,7 @@ async function isCusttomIdFree() {
     const customId = customInput.value;
     if (customId) {
         document.getElementById("testCustomId").textContent = "🔃"
-        const request = await axios.get(`/link/check/${customId}`);
+        const request = await axios.get(`${baseURL}/link/check/${customId}`);
         if (request.data) {
             document.getElementById("testCustomId").textContent = "✔"
         }
@@ -116,7 +116,7 @@ function domDisconnect() {
 //Sends a new url to shorten
 function sendNewUrl(inputUrl, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    const response = axios.post(`/link/create`, data)
+    const response = axios.post(`${baseURL}/link/create`, data)
     response.then((value) => {
         addResultEl(value.data)
     })
@@ -125,7 +125,7 @@ function sendNewUrl(inputUrl, userName) {
 //Send a request for a custom url link
 function sendNewCustomUrl(inputUrl, customId, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    const response = axios.post(`/link/create/${customId}`, data)
+    const response = axios.post(`${baseURL}/link/create/${customId}`, data)
     response.then((value) => {
         addResultEl(value.data)
     })
@@ -158,7 +158,7 @@ function addResultEl(shortUrl) {
 
 //Returns a promise containing all urls by given user
 function getUrlsByUser(userName) {
-    const response = axios.get(`/link/user/${userName}`)
+    const response = axios.get(`${baseURL}/link/user/${userName}`)
     return response;
 }
 
@@ -178,12 +178,12 @@ function domUserInfo(userName) {
 
 //Creates an element containing info about a url
 function buildUrlEl(urlObj, urlNum) {
-    const shortUrl = "http://link-cut.herokuapp.com/link/" + urlObj.id //change after getting heroku url
+    const shortUrl = "http://link-cut.herokuapp.com/link/" + urlObj.token //change after getting heroku url
     const urlEl = document.createElement("li")
     urlEl.textContent = `URL ${urlNum}:`;
     urlEl.classList.add("urlInfo")
     const idDiv = document.createElement("div")
-    idDiv.textContent = `ID: ${urlObj.id}`;
+    idDiv.textContent = `Token: ${urlObj.token}`;
     const fullUrlDiv = document.createElement("div")
     fullUrlDiv.textContent = `Full URL: ${urlObj.originalUrl}`;
     const viewCountDiv = document.createElement("div")
