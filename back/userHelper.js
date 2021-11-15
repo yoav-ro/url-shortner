@@ -4,20 +4,20 @@ const path = require("path")
 const bcrypt = require('bcrypt')
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
-mongoose.connect(process.env.DATA_BASE, { useNewUrlParser: true, })
+// mongoose.connect(process.env.DATA_BASE, { useNewUrlParser: true, })
 
-mongoose.connection.on("connected", () => {
-    console.log("MongoDB connected!")
-})
+// mongoose.connection.on("connected", () => {
+//     console.log("MongoDB connected!")
+// })
 
 
 async function register(userName, password) {
-    const user = await User.find({username: userName})
-    if(!user){
+    const user = await User.findOne({ username: userName })
+    if (!user) {
         addUserToDB(userName, password)
     }
-    else{
-        console.log("Username already taken")
+    else {
+        throw "User name already taken!"
     }
 }
 function addUserToDB(userName, password) {
@@ -48,8 +48,7 @@ async function login(userName, password) {
             console.log("login failed!")
         }
     }
-    else
-    {
+    else {
         console.log("User doesnt exist!")
     }
 }
@@ -60,4 +59,9 @@ function validate() {
 
 function getUrls() {
 
+}
+
+module.exports = {
+    login,
+    register,
 }

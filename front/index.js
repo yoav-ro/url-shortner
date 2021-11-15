@@ -2,11 +2,14 @@ const submitUrlBtn = document.getElementById("submitLinkBtn");
 const userInputBtn = document.getElementById("submitUserBtn");
 const disconnectBtn = document.getElementById("disconnectBtn");
 const testCustomIdBtn = document.getElementById("testCustomId")
+const registerBtn = document.getElementById("registerBtn")
 
 submitUrlBtn.addEventListener("click", () => { addNewUrl() })
-userInputBtn.addEventListener("click", () => { userRegister() })
+userInputBtn.addEventListener("click", () => { userLogin() })
 disconnectBtn.addEventListener("click", () => { domDisconnect() })
 testCustomIdBtn.addEventListener("click", () => { isCusttomIdFree() })
+registerBtn.addEventListener("click", () => { userRegister() })
+
 
 // const validator = require("validator")
 
@@ -72,14 +75,25 @@ async function isCusttomIdFree() {
 }
 
 //User loggin
-function userRegister() {
+function userLogin() {
     const userNameInput = document.getElementById("userNameInput")
-    if (userNameInput.value) {
+    const passwordInput = document.getElementById("passwordInput")
+    if (userNameInput.value && passwordInput.value) {
         currUser = userNameInput.value;
         domLogin();
     }
     else {
         alert("No user entered!")
+    }
+}
+async function userRegister() {
+    const userNameInput = document.getElementById("userNameInput")
+    const passwordInput = document.getElementById("passwordInput")
+    if (userNameInput.value && passwordInput.value) {
+        const response = await axios.post(`${baseURL}/register`, { username: userNameInput.value, password: passwordInput.value })
+    }
+    else {
+        alert("Missing input!")
     }
 }
 
