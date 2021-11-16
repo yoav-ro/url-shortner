@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const shortId = require("shortid");
-
+const authenticateToken = require("../authenticator")
 const linkRouter = express.Router();
 
 const linkHelper = require("../linkHelper");
@@ -21,7 +21,7 @@ linkRouter.get("/shortUrl/:token", (req, res) => {
     res.send(shortUrl)
 })
 
-linkRouter.get("/check/:token", (req, res) => {
+linkRouter.get("/check/:token", authenticateToken, (req, res) => {
     const token = req.params.token;
     linkHelper.isCustomFree(token).then((value) => {
         if (value === true) {
@@ -34,7 +34,7 @@ linkRouter.get("/check/:token", (req, res) => {
 })
 
 //Handles shortning a link with a custom short end
-linkRouter.post("/create/:token", (req, res) => {
+linkRouter.post("/create/:token", authenticateToken, (req, res) => {
     const token = req.params.token;
     linkHelper.isCustomFree(token).then((value) => {
         if (value === true) {

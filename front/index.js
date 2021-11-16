@@ -1,11 +1,11 @@
 const submitUrlBtn = document.getElementById("submitLinkBtn");
-const userInputBtn = document.getElementById("submitUserBtn");
+const loginBtn = document.getElementById("submitUserBtn");
 const disconnectBtn = document.getElementById("disconnectBtn");
 const testCustomIdBtn = document.getElementById("testCustomId")
 const registerBtn = document.getElementById("registerBtn")
 
 submitUrlBtn.addEventListener("click", () => { addNewUrl() })
-userInputBtn.addEventListener("click", () => { userLogin() })
+loginBtn.addEventListener("click", () => { userLogin(document.getElementById("userNameInput").value, document.getElementById("passwordInput").value) })
 disconnectBtn.addEventListener("click", () => { domDisconnect() })
 testCustomIdBtn.addEventListener("click", () => { isCusttomIdFree() })
 registerBtn.addEventListener("click", () => { userRegister() })
@@ -60,7 +60,11 @@ async function isCusttomIdFree() {
     const customId = customInput.value;
     if (customId) {
         document.getElementById("testCustomId").textContent = "🔃"
-        const request = await axios.get(`${baseURL}/link/check/${customId}`);
+        const request = await axios.get(`${baseURL}/link/check/${customId}`, {
+            headers: {
+                "authorization": `Bearer ${getUserToken()}`
+            }
+        });
         if (request.data) {
             document.getElementById("testCustomId").textContent = "✔"
         }
@@ -74,23 +78,47 @@ async function isCusttomIdFree() {
     }
 }
 
-//User loggin
-function userLogin() {
-    const userNameInput = document.getElementById("userNameInput")
-    const passwordInput = document.getElementById("passwordInput")
-    if (userNameInput.value && passwordInput.value) {
-        currUser = userNameInput.value;
-        domLogin();
+function getUserToken() {
+    const cookies = document.cookie.split("; ");
+    for (cookie of cookies) {
+        if (cookie.split("=")[0] === "userToken") {
+            return cookie.split("=")[1]
+        }
+    }
+}
+
+//User login
+function userLogin(userNameInput, passwordInput) {
+    const resultLabel = document.getElementById("loginRes")
+    if (userNameInput && passwordInput) {
+        currUser = userNameInput;
+        const response = axios.post(`${baseURL}/login`, { username: userNameInput, password: passwordInput })
+        response.then((value) => {
+            document.cookie = `userToken=${value.data}`
+            domLogin();
+        }).catch((value) => {
+            resultLabel.style.display = "initial";
+            resultLabel.textContent = value.response.data;
+        })
     }
     else {
         alert("No user entered!")
     }
 }
-async function userRegister() {
+
+function userRegister() {
+    const resultLabel = document.getElementById("loginRes")
     const userNameInput = document.getElementById("userNameInput")
     const passwordInput = document.getElementById("passwordInput")
     if (userNameInput.value && passwordInput.value) {
-        const response = await axios.post(`${baseURL}/register`, { username: userNameInput.value, password: passwordInput.value })
+        const response = axios.post(`${baseURL}/register`, { username: userNameInput.value, password: passwordInput.value })
+        response.then((value) => {
+            console.log(value)
+            userLogin(userNameInput.value, passwordInput.value)
+        }).catch((value) => {
+            resultLabel.style.display = "initial";
+            resultLabel.textContent = value.response.data;
+        })
     }
     else {
         alert("Missing input!")
@@ -101,11 +129,19 @@ async function userRegister() {
 //Handles all elements related to a user when loggin in
 function domLogin() {
     const userNameInput = document.getElementById("userNameInput")
+    const passwordInput = document.getElementById("passwordInput")
+    const resultLabel = document.getElementById("loginRes")
     document.getElementById("customInput").style.display = "initial"
     document.getElementById("baseLinkLabel").style.display = "initial"
     document.getElementById("testCustomId").style.display = "initial"
+    document.getElementById("passwordInput").style.display = "none"
+    passwordInput.style.display = "none"
+    passwordInput.value = "";
+    resultLabel.style.display = "none";
+    resultLabel.textContent = "";
+    registerBtn.style.display = "none";
 
-    userInputBtn.style.display = "none";
+    loginBtn.style.display = "none";
     disconnectBtn.style.display = "initial";
     userNameInput.readOnly = true;
     userNameInput.value = `Welcome ${currUser}`
@@ -114,11 +150,17 @@ function domLogin() {
 
 //Handles all the elements related to a user when disconnecting 
 function domDisconnect() {
+    console.log("removing cookie")
+    document.cookie = `${document.cookie}; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
     const userNameInput = document.getElementById("userNameInput")
+    const passwordInput = document.getElementById("passwordInput")
     document.getElementById("customInput").style.display = "none"
     document.getElementById("baseLinkLabel").style.display = "none"
     document.getElementById("testCustomId").style.display = "none"
-    userInputBtn.style.display = "initial";
+    passwordInput.style.display = "initial"
+    passwordInput.value = "";
+    registerBtn.style.display = "initial";
+    loginBtn.style.display = "initial";
     disconnectBtn.style.display = "none";
     currUser = "";
     userNameInput.readOnly = false;
@@ -139,7 +181,7 @@ function sendNewUrl(inputUrl, userName) {
 //Send a request for a custom url link
 function sendNewCustomUrl(inputUrl, customId, userName) {
     const data = { longUrl: inputUrl, username: userName }
-    const response = axios.post(`${baseURL}/link/create/${customId}`, data)
+    const response = axios.post(`${baseURL}/link/create/${customId}`, data) //add authorization header
     response.then((value) => {
         addResultEl(value.data)
     })
@@ -192,7 +234,7 @@ function domUserInfo(userName) {
 
 //Creates an element containing info about a url
 function buildUrlEl(urlObj, urlNum) {
-    const shortUrl = "http://link-cut.herokuapp.com/link/" + urlObj.token //change after getting heroku url
+    const shortUrl = "http://link-cut.herokuapp.com/link/" + urlObj.token
     const urlEl = document.createElement("li")
     urlEl.textContent = `URL ${urlNum}:`;
     urlEl.classList.add("urlInfo")

@@ -4,11 +4,11 @@ const path = require("path")
 const bcrypt = require('bcrypt')
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
-// mongoose.connect(process.env.DATA_BASE, { useNewUrlParser: true, })
+mongoose.connect(process.env.DATA_BASE, { useNewUrlParser: true, })
 
-// mongoose.connection.on("connected", () => {
-//     console.log("MongoDB connected!")
-// })
+mongoose.connection.on("connected", () => {
+    console.log("MongoDB connected!")
+})
 
 
 async function register(userName, password) {
@@ -38,30 +38,23 @@ function comparePass(encrypedPass, hash) {
     return bcrypt.compareSync(encrypedPass, hash)
 }
 
-async function login(userName, password) {
+async function validateLogin(userName, password) {
+    console.log(userName, password)
     const user = await User.findOne({ username: userName })
     if (user) {
         if (comparePass(password, user.password)) {
-            console.log("Login success!")
+            return true;
         }
         else {
-            console.log("login failed!")
+            throw "Incorrect password"
         }
     }
     else {
-        console.log("User doesnt exist!")
+        throw "User doesnt exist"
     }
 }
 
-function validate() {
-
-}
-
-function getUrls() {
-
-}
-
 module.exports = {
-    login,
+    validateLogin,
     register,
 }

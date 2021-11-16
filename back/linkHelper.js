@@ -9,10 +9,8 @@ mongoose.connection.on("connected", () => {
     console.log("MongoDB connected!")
 })
 
-
 async function addLinkToDB(linkObj) {
     const link = new Link(linkObj);
-    console.log(linkObj)
     await link.save();
 }
 
@@ -33,7 +31,6 @@ async function getUrlsByUser(userName, res) {
 
 async function redirect(shortUrl, res) {
     const link = await Link.findOneAndUpdate({ token: shortUrl }, { $inc: { redirectCount: 1 } })
-    console.log(link)
     if (link) {
         res.redirect(link.originalUrl)
     }
