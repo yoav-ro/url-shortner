@@ -5,4 +5,6 @@
 - A user can view all of its created URLs
 
 #### Technologies
-The project was built using Javascript, Node.Js and MongoDB.
+The project was built using Javascript, Node.Js, MongoDB, and a deployment using Heroku.
+
+The deployment [here](https://link-cut.herokuapp.com/)
